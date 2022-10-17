@@ -10,22 +10,22 @@ Type
   PointType = Record
     x, y: Integer;
   End;
-  arrPointType = array [1..size] Of PointType;
+  //arrPointType = array [1..size] Of PointType;
 
 Var 
   Driver, Modo,i: Integer;             { Pues el driver y el modo, claro }
   option: Char;
-  Triangle : arrPointType;
+  Triangle : array[1..size] Of PointType;
 Procedure load();
 Begin
-  arrPointType[1].x := 50;
-  arrPointType[1].Y := 100;
-  arrPointType[2].X := 100;
-  arrPointType[2].Y := 100;
-  arrPointType[3].X := 75;
-  arrPointType[3].Y := 150;
-  arrPointType[4].X := 50;
-  arrPointType[4].Y := 100;
+  Triangle[1].x := 50;
+  Triangle[1].Y := 100;
+  Triangle[2].X := 100;
+  Triangle[2].Y := 100;
+  Triangle[3].X := 75;
+  Triangle[3].Y := 150;
+  Triangle[4].X := 50;
+  Triangle[4].Y := 100;
 
 End;
 Begin
