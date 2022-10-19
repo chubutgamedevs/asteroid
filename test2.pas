@@ -1,4 +1,3 @@
-
 Program test;
 {$UNITPATH ./units}
 
@@ -31,18 +30,18 @@ Begin
         Begin
             velocidad := velocidad + aceleracion;
             rectangulo.y := Round(rectangulo.y - velocidad);
-        End;
-    If (teclado[SDL_SCANCODE_A] = 1) Or (teclado[SDL_SCANCODE_LEFT] = 1) Then
+        End
+    else If (teclado[SDL_SCANCODE_A] = 1) Or (teclado[SDL_SCANCODE_LEFT] = 1) Then
         Begin
             velocidad := velocidad + aceleracion;
             rectangulo.x := Round(rectangulo.x - velocidad);
-        End;
-    If (teclado[SDL_SCANCODE_S] = 1) Or (teclado[SDL_SCANCODE_DOWN] = 1) Then
+        End
+    else If (teclado[SDL_SCANCODE_S] = 1) Or (teclado[SDL_SCANCODE_DOWN] = 1) Then
         Begin
             velocidad := velocidad + aceleracion;
             rectangulo.y := Round(rectangulo.y + velocidad);
-        End;
-    If (teclado[SDL_SCANCODE_D] = 1) Or (teclado[SDL_SCANCODE_RIGHT] = 1) Then
+        End
+    else If (teclado[SDL_SCANCODE_D] = 1) Or (teclado[SDL_SCANCODE_RIGHT] = 1) Then
         Begin
             velocidad := velocidad + aceleracion;
             rectangulo.x := Round(rectangulo.x + velocidad);
@@ -51,6 +50,15 @@ Begin
         Begin
             velocidad := velocidad - aceleracion;
         End;
+    
+    if (rectangulo.x > ventanaW) then
+        rectangulo.x := -50
+    else if (rectangulo.x < -50) then
+        rectangulo.x := ventanaW
+    else if (rectangulo.y > ventanaH) then
+        rectangulo.y := -50
+    else if (rectangulo.y < -50) then
+        rectangulo.y := ventanaH;
 
     If (teclado[SDL_SCANCODE_ESCAPE] = 1) Or (evento^.window.event = SDL_WINDOWEVENT_CLOSE) Then
         running := False;
@@ -98,6 +106,8 @@ Begin
             SDL_PollEvent(evento);
             teclado := SDL_GetKeyboardState(Nil);
             rectangulo := mando(teclado, rectangulo);
+
+            
 
             // grey background
             SDL_SetRenderDrawColor(render, 20, 20, 20, SDL_ALPHA_OPAQUE);
