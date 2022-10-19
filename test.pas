@@ -76,7 +76,7 @@ Begin
   generarRectangulo;
 
   // program loop
-  While running = True Do
+  While running  Do
     Begin
       SDL_PumpEvents;
       teclado := SDL_GetKeyboardState(Nil);
