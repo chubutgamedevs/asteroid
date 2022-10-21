@@ -4,23 +4,21 @@ Program test;
 Uses SDL2, SDL2_image;
 
 Const 
-  xPos =   250;
-  yPos =   250;
-  width =   34;
-  height =   50;
+  width =   44;
+  height =   60;
 
 Var 
   ventana :   PSDL_Window;
   render :   PSDL_Renderer;
+  nave :  PSDL_Texture;
   rectangulo :   TSDL_Rect;
+  event :   PSDL_Event;
   teclado :   PUInt8;
-  running :   Boolean =   True;
-  velocidad :   Integer =   10;
+  velocidad :   Integer =   8;
   ventanaW :   Integer =   800;
   ventanaH :   Integer =   600;
-  event :   PSDL_Event;
-  nave :  PSDL_Texture;
-  gradosRotacion : Integer = 1;
+  gradosRotacion : Real =   0;
+  running :   Boolean =   True;
 
 Function mando(teclado: PUInt8; rectangulo : TSDL_Rect) :   TSDL_Rect;
 Begin
@@ -35,11 +33,15 @@ Begin
 
   // WASD keys pressed
   If (teclado[SDL_SCANCODE_W] = 1) Or (teclado[SDL_SCANCODE_UP] = 1) Then
-    rectangulo.y := rectangulo.y - velocidad;
+    Begin
+      rectangulo.x := rectangulo.x + Round(cos(gradosRotacion * pi / 180) * velocidad);
+      rectangulo.y := rectangulo.y + Round(sin(gradosRotacion * pi / 180) * velocidad);
+      nave := IMG_LoadTexture(render, './ImgNAve/nave1.png');
+    End
+  Else
+    nave := IMG_LoadTexture(render, './ImgNAve/nave0.png');
   If (teclado[SDL_SCANCODE_A] = 1) Or (teclado[SDL_SCANCODE_LEFT] = 1) Then
     gradosRotacion := gradosRotacion - velocidad;
-  If (teclado[SDL_SCANCODE_S] = 1) Or (teclado[SDL_SCANCODE_DOWN] = 1) Then
-    rectangulo.y := rectangulo.y + velocidad;
   If (teclado[SDL_SCANCODE_D] = 1) Or (teclado[SDL_SCANCODE_RIGHT] = 1) Then
     gradosRotacion := gradosRotacion + velocidad;
 
@@ -61,14 +63,12 @@ Begin
   SDL_Quit;
 End;
 
-Procedure generarRectanguloYNave;
+Procedure generarRectangulo;
 Begin
-  rectangulo.x := xPos;
-  rectangulo.y := yPos;
+  rectangulo.x := ventanaW Div 2;
+  rectangulo.y := ventanaH Div 2;
   rectangulo.w := width;
   rectangulo.h := height;
-
-  nave := IMG_LoadTexture(render, './ImgNAve/lol.png');
 End;
 
 Procedure crearVentaraYRender;
@@ -86,7 +86,7 @@ Begin
   New(event);
 
   // prepare rectangle
-  generarRectanguloYNave;
+  generarRectangulo;
 
   // program loop
   While running  Do
@@ -99,9 +99,9 @@ Begin
       SDL_SetRenderDrawColor(render, 0, 0, 0, SDL_ALPHA_OPAQUE);
       SDL_RenderClear(render);
 
-      // draw red rectangle
+      // draw rectangle
       SDL_SetRenderDrawColor(render, 255, 0, 0, SDL_ALPHA_OPAQUE);
-      SDL_RenderCopyEx(render, nave, nil, @rectangulo, gradosRotacion, nil, 1);
+      SDL_RenderCopyEx(render, nave, Nil, @rectangulo, gradosRotacion + 90, Nil, 1);
       SDL_RenderPresent(render);
       SDL_Delay(20);
     End;
