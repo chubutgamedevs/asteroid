@@ -1,27 +1,29 @@
 Program test;
 {$UNITPATH ../lib/units}
 
-Uses sdl2, sdl2_image, sdl2_mixer;
+Uses sdl2, sdl2_image, sdl2_mixer, vectores, logic;
 
 Const 
-  width =   34;
-  height =   50;
+  width = 34;
+  height = 50;
 
 Var 
-  ventana :   PSDL_Window;
-  render :   PSDL_Renderer;
-  nave :  PSDL_Texture;
-  icon :  PSDL_Surface;
-  rectangulo :   TSDL_Rect;
-  event :   PSDL_Event;
-  teclado :   PUInt8;
-  velocidad :   Integer =   6;
-  ventanaW :   Integer =   800;
-  ventanaH :   Integer =   600;
-  gradosRotacion : Real =   0;
-  running :   Boolean =   True;
-  motor, disparo :   PMix_Chunk;
-  spaceship :   PMix_Music;
+  ventana : PSDL_Window;
+  render : PSDL_Renderer;
+  nave : PSDL_Texture;
+  icon : PSDL_Surface;
+  rectangulo : TSDL_Rect;
+  event : PSDL_Event;
+  teclado : PUInt8;
+  velocidadMax : Integer = 6;
+  ventanaW : Integer = 800;
+  ventanaH : Integer = 600;
+  gradosRotacion : Real = 0;
+  running : Boolean = True;
+  sonidoMotor : Boolean = False;
+  motor, disparo : PMix_Chunk;
+  spaceship : PMix_Music;
+  aceleracion, vel : vect;
 
 Procedure salir;
 Begin
@@ -42,6 +44,10 @@ Begin
   rectangulo.y := ventanaH Div 2;
   rectangulo.w := width;
   rectangulo.h := height;
+  aceleracion.x := 0;
+  aceleracion.y := 0;
+  vel.x := 0;
+  vel.y := 0;
 End;
 
 Procedure crearVentaraYRender;
@@ -67,35 +73,36 @@ End;
 
 Function mando(teclado: PUInt8; rectangulo : TSDL_Rect) :   TSDL_Rect;
 Begin
-  If rectangulo.x > ventanaW Then
-    rectangulo.x := -50
-  Else If rectangulo.x < -50 Then
-    rectangulo.x := ventanaW
-  Else If rectangulo.y > ventanaH Then
-    rectangulo.y := -50
-  Else If rectangulo.y < -50 Then
-    rectangulo.y := ventanaH;
-
-  // WASD keys pressed
+  // WSD keys pressed
   If (teclado[SDL_SCANCODE_W] = 1) Or (teclado[SDL_SCANCODE_UP] = 1) Then
     Begin
-      rectangulo.x := rectangulo.x + Round(cos(gradosRotacion * pi / 180) * velocidad);
-      rectangulo.y := rectangulo.y + Round(sin(gradosRotacion * pi / 180) * velocidad);
+      aceleracion.x := -1;
+      aceleracion.y := -1;
+      aceleracion.x := aceleracion.x + Round(cos(gradosRotacion * pi / 180) * vel.x);
+      aceleracion.y := aceleracion.y + Round(sin(gradosRotacion * pi / 180) * vel.y);
       nave := IMG_LoadTexture(render, '../media/img/nave1.png');
-      Mix_PlayChannel(2, motor, 0);
+      If Not sonidoMotor Then
+        Begin
+          sonidoMotor := True;
+          Mix_PlayChannel(2, motor, -1);
+        End;
     End
   Else
     Begin
-      Mix_HaltChannel(2);
+      If sonidoMotor Then
+        Begin
+          sonidoMotor := False;
+          Mix_HaltChannel(2);
+        End;
       nave := IMG_LoadTexture(render, '../media/img/nave0.png');
     End;
 
   If (teclado[SDL_SCANCODE_A] = 1) Or (teclado[SDL_SCANCODE_LEFT] = 1) Then
-    gradosRotacion := gradosRotacion - velocidad;
+    gradosRotacion := gradosRotacion - velocidadMax;
   If (teclado[SDL_SCANCODE_D] = 1) Or (teclado[SDL_SCANCODE_RIGHT] = 1) Then
-    gradosRotacion := gradosRotacion + velocidad;
+    gradosRotacion := gradosRotacion + velocidadMax;
   If teclado[SDL_SCANCODE_SPACE] = 1 Then
-      Mix_PlayChannel(3, disparo, 0);
+    Mix_PlayChannel(3, disparo, 0);
 
   // ESC pressed
   If (event^.window.event = SDL_WINDOWEVENT_CLOSE) Or (teclado[SDL_SCANCODE_ESCAPE] = 1) Then
@@ -105,9 +112,7 @@ Begin
 End;
 
 Begin
-  //initilization of video subsystem
   If SDL_Init(SDL_INIT_VIDEO Or SDL_INIT_AUDIO) < 0 Then Halt;
-  // Prepare mixer
   If Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096) < 0 Then Halt;
 
   crearVentaraYRender;
@@ -122,6 +127,17 @@ Begin
     Begin
       SDL_PollEvent(event);
       rectangulo := mando(teclado, rectangulo);
+
+      LimitarVel(vel, velocidadMax);
+
+      vel := sumar(vel, aceleracion);
+
+      rectangulo.x := Round(rectangulo.x + vel.x);
+      rectangulo.y := Round(rectangulo.y + vel.y);
+
+      rectangulo := boundary(rectangulo, ventanaW, ventanaH);
+
+      vel := multEscalar(vel, 0.9);
 
       SDL_RenderClear(render);
 

@@ -1,5 +1,5 @@
 Program test2;
-{$UNITPATH ./lib/units}
+{$UNITPATH ../lib/units}
 
 Uses sdl2, sdl2_image;
 
@@ -54,10 +54,10 @@ Begin
         velocidady := velocidady - vel
     Else If (teclado[SDL_SCANCODE_A] = 1) Or (teclado[SDL_SCANCODE_LEFT] = 1) Then
         velocidadx := velocidadx - vel
-    Else If (teclado[SDL_SCANCODE_S] = 1) Or (teclado[SDL_SCANCODE_DOWN] = 1) Then
-        velocidady := velocidady + vel
     Else If (teclado[SDL_SCANCODE_D] = 1) Or (teclado[SDL_SCANCODE_RIGHT] = 1) Then
         velocidadx := velocidadx + vel
+    Else If (teclado[SDL_SCANCODE_S] = 1) Or (teclado[SDL_SCANCODE_DOWN] = 1) Then
+        velocidady := velocidady + vel
     Else
         Begin
             If velocidadx > 0 Then
