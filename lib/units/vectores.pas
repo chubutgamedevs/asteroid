@@ -14,6 +14,7 @@ Function normalize(v : vect) : vect;
 Function limit(v : vect; max : Real) : vect;
 Function sumar(v, w : vect) : vect;
 Function multEscalar(v : vect; num : Real) : vect;
+Function vectZero(v : vect) : vect;
 
 Implementation
 
@@ -45,6 +46,13 @@ Begin
     limit := multEscalar(normalize(v), max)
   Else
     limit := v;
+End;
+
+Function vectZero(v : vect) : vect;
+Begin
+  v.x := 0;
+  v.y := 0;
+  vectZero := v;
 End;
 
 End.

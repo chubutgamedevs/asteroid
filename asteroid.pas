@@ -37,12 +37,11 @@ End;
 
 procedure initPos;
 begin
-  velc.x := 0;
-  velc.y := 0;
   Nave.pos.x := (ventanaW Div 2) - (width Div 2);
   Nave.pos.y := (ventanaH Div 2) - (height Div 2);
-  acc.x := 0;
-  acc.y := 0;
+  //Nave := centerPos(Nave, ventanaH, ventanaW, width, height);
+  acc := vectZero(acc);
+  velc := vectZero(velc);
 end;
 
 //MAIN
@@ -58,7 +57,7 @@ Begin
 
       gradosRotacion := rotacion(gradosRotacion, velocidadMax);
       velc := sumar(velc, acc);
-      acc := kInput(acc, velocidadMax, gradosRotacion);
+      acc := kInput(acc, gradosRotacion);
       velc := limit(velc, velocidadMax);
 
       Nave := moverNave(Nave, velc);
