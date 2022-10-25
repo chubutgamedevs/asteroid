@@ -10,6 +10,8 @@ Type
   End;
 
 Function norma(v : vect) : Real;
+Function normalize(v : vect) : vect;
+Function limit(v : vect; max : Real) : vect;
 Function sumar(v, w : vect) : vect;
 Function multEscalar(v : vect; num : Real) : vect;
 
@@ -30,6 +32,19 @@ Function multEscalar(v : vect; num : Real) : vect;
 Begin
   multEscalar.x := v.x * num;
   multEscalar.y := v.y * num;
+End;
+
+Function normalize(v : vect) : vect;
+Begin
+  normalize := multEscalar(v, 1 / norma(v));
+End;
+
+Function limit(v : vect; max : Real) : vect;
+Begin
+  If norma(v) > max Then
+    limit := multEscalar(normalize(v), max)
+  Else
+    limit := v;
 End;
 
 End.
