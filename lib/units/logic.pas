@@ -98,7 +98,7 @@ Begin
     evento := False
 End;
 
-function centerPos(winH, winW, w, h : Integer) : tNave;
+Function centerPos(winH, winW, w, h : Integer) : tNave;
 Begin
   centerPos.pos.x := (winW Div 2) - (w Div 2);
   centerPos.pos.y := (winH Div 2) - (h Div 2);

@@ -10,20 +10,23 @@ Const
 
 Var 
   Nave : tNave;
-  acc : vect;
-  velc : vect;
+  acc, velc : vect;
   ventana : PSDL_Window;
   render : PSDL_Renderer;
   events : PSDL_Event;
+  icon : PSDL_Surface;
   ventanaW : Integer = 800;
   ventanaH : Integer = 600;
 
 Procedure crearVentaraYRender;
 Begin
-  ventana := SDL_CreateWindow('Pascalroid', 50, 50, ventanaW, ventanaH, SDL_WINDOW_SHOWN);
+  ventana := SDL_CreateWindow('Pascalroid', 50, 50, ventanaW, ventanaH, SDL_WINDOW_RESIZABLE);
   If ventana = Nil Then Halt;
   render := SDL_CreateRenderer(ventana, -1, 0);
   If render = Nil Then Halt;
+  icon := IMG_Load('./media/img/pascalroid.ico');
+  If icon = Nil Then Halt;
+  SDL_SetWindowIcon(ventana, icon);
 End;
 
 Procedure salirJuego;
@@ -34,14 +37,14 @@ Begin
   SDL_Quit;
 End;
 
-procedure initPos;
-begin
+Procedure initPos;
+Begin
   Nave.pos.x := (ventanaW Div 2) - (width Div 2);
   Nave.pos.y := (ventanaH Div 2) - (height Div 2);
-  //Nave := centerPos(Nave, ventanaH, ventanaW, width, height);
+  //Nave := centerPos(ventanaH, ventanaW, width, height);
   acc := vectZero();
   velc := vectZero();
-end;
+End;
 
 //MAIN
 Begin
