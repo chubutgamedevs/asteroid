@@ -96,6 +96,8 @@ Begin
   input := SDL_GetKeyboardState(Nil);
   If (input[SDL_SCANCODE_ESCAPE] = 1) Or (ev^.window.event = SDL_WINDOWEVENT_CLOSE) Then
     evento := False
+  Else
+    evento := True;
 End;
 
 Function centerPos(winH, winW, w, h : Integer) : tNave;
