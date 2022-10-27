@@ -6,18 +6,17 @@ Uses SDL2, SDL2_image, sdl2_mixer, vectores, logic;
 Const 
   width = 34;
   height = 50;
+  velocidadMax = 6;
 
 Var 
   Nave : tNave;
   acc : vect;
   velc : vect;
-  gradosRotacion : Real = 0;
   ventana : PSDL_Window;
   render : PSDL_Renderer;
   events : PSDL_Event;
   ventanaW : Integer = 800;
   ventanaH : Integer = 600;
-  velocidadMax : Integer = 6;
 
 Procedure crearVentaraYRender;
 Begin
@@ -40,8 +39,8 @@ begin
   Nave.pos.x := (ventanaW Div 2) - (width Div 2);
   Nave.pos.y := (ventanaH Div 2) - (height Div 2);
   //Nave := centerPos(Nave, ventanaH, ventanaW, width, height);
-  acc := vectZero(acc);
-  velc := vectZero(velc);
+  acc := vectZero();
+  velc := vectZero();
 end;
 
 //MAIN
@@ -55,9 +54,9 @@ Begin
     Begin
       SDL_PollEvent(events);
 
-      gradosRotacion := rotacion(gradosRotacion, velocidadMax);
+      Nave := rotacion(velocidadMax, Nave);
       velc := sumar(velc, acc);
-      acc := kInput(acc, gradosRotacion);
+      acc := kInput(acc, Nave);
       velc := limit(velc, velocidadMax);
 
       Nave := moverNave(Nave, velc);
@@ -69,7 +68,7 @@ Begin
       SDL_SetRenderDrawColor(render, 0, 0, 0, SDL_ALPHA_OPAQUE);
       SDL_RenderClear(render);
 
-      dibujarNave(render, Nave, width, height, gradosRotacion);
+      dibujarNave(render, Nave, width, height);
       SDL_RenderPresent(render);
       SDL_Delay(20);
     End;
