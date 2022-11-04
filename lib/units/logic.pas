@@ -9,6 +9,13 @@ Type
     pos: vect;
     rot: Real;
   End;
+  tPoly = array of TSDL_Point;
+  tAsteroide = record
+    lado : Integer;
+    r : Real;
+    puntos : tPoly;
+    pos : vect;
+  end;
 
 Function boundary(fig : tNave; winW, winH : Integer) : tNave;
 Function moverNave(fig : tNave; vel : vect) : tNave;
@@ -17,6 +24,8 @@ Function rotacion(velMax : Integer; fig : tNave) : tNave;
 Function dibujarNave(render : PSDL_Renderer; fig : tNave; w, h : Integer) : tNave;
 Function evento(ev : PSDL_Event) : Boolean;
 Function centerPos(winH, winW, w, h : Integer) : tNave;
+function generarAsteroide(r : Real; pos : vect; lado : Integer) : tAsteroide;
+procedure dibujarAsteroide(render : PSDL_Renderer; a : tAsteroide);
 
 Implementation
 
@@ -105,5 +114,37 @@ Begin
   centerPos.pos.x := (winW Div 2) - (w Div 2);
   centerPos.pos.y := (winH Div 2) - (h Div 2);
 End;
+
+procedure dibujarAsteroide(render : PSDL_Renderer; a : tAsteroide);
+var
+  i : Integer;
+begin
+  SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
+  for i := 0 to (a.lado - 1) do
+    begin
+      SDL_RenderDrawLine(render, 
+        a.puntos[i].x + Round(a.pos.x), a.puntos[i].y + Round(a.pos.y), 
+        a.puntos[(i + 1) mod a.lado].x + Round(a.pos.x), a.puntos[(i + 1) mod a.lado].y + Round(a.pos.y));
+    end;
+end;
+
+function generarAsteroide(r : Real; pos : vect; lado : Integer) : tAsteroide;
+var
+  resultado : tAsteroide;
+  i : Integer;
+begin
+  resultado.r := r;
+  resultado.pos := pos;
+  resultado.lado := lado;
+
+  SetLength(resultado.puntos, lado);
+  for i := 0 to (lado - 1) do
+    begin
+      resultado.puntos[i].x := Round(r * cos(i * 2 * Pi / lado) + random(Round(r) div 2));
+      resultado.puntos[i].y := Round(r * sin(i * 2 * Pi / lado) + random(Round(r) div 2));
+    end;
+
+  generarAsteroide := resultado;
+end;
 
 End.

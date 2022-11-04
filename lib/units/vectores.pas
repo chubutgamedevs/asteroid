@@ -15,6 +15,7 @@ Function limit(v : vect; max : Real) : vect;
 Function sumar(v, w : vect) : vect;
 Function multEscalar(v : vect; num : Real) : vect;
 Function vectZero() : vect;
+function newVect(x : Real; y : Real) : vect;
 
 Implementation
 
@@ -53,5 +54,11 @@ Begin
   vectZero.x := 0;
   vectZero.y := 0;
 End;
+
+function newVect(x : Real; y : Real) : vect;
+begin
+  newVect.x := x;
+  newVect.y := y;
+end;
 
 End.
