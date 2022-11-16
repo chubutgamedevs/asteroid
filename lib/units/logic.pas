@@ -5,31 +5,26 @@ Interface
 Uses sdl2, sdl2_image, vectores;
 
 Type 
-  tNave = Record
-    pos: vect;
-    rot: Real;
-  End;
-  tPoly = array of TSDL_Point;
-  tAsteroide = record
+  figVect = Record
+    pos, vel : vect;
+    rot, r : Real;
     lado : Integer;
-    r : Real;
-    puntos : tPoly;
-    pos : vect;
-  end;
+    puntos : array Of TSDL_Point
+  End;
 
-Function boundary(fig : tNave; winW, winH : Integer) : tNave;
-Function moverNave(fig : tNave; vel : vect) : tNave;
-Function kInput(acc: vect; fig : tNave) : vect;
-Function rotacion(velMax : Integer; fig : tNave) : tNave;
-Function dibujarNave(render : PSDL_Renderer; fig : tNave; w, h : Integer) : tNave;
+Function boundary(fig : figVect; winW, winH : Integer) : figVect;
+Function moverNave(fig : figVect; vel : vect) : figVect;
+Function kInput(acc: vect; fig : figVect) : vect;
+Function rotacion(velMax : Integer; fig : figVect) : figVect;
+Function dibujarNave(render : PSDL_Renderer; fig : figVect; w, h : Integer) : figVect;
 Function evento(ev : PSDL_Event) : Boolean;
-Function centerPos(winH, winW, w, h : Integer) : tNave;
-function generarAsteroide(r : Real; pos : vect; lado : Integer) : tAsteroide;
-procedure dibujarAsteroide(render : PSDL_Renderer; a : tAsteroide);
+Function centerPos(winH, winW, w, h : Integer) : figVect;
+function generarAsteroide(r : Real; pos : vect; lado : Integer) : figVect;
+procedure dibujarAsteroide(render : PSDL_Renderer; a : figVect);
 
 Implementation
 
-Function boundary(fig : tNave; winW, winH : Integer) : tNave;
+Function boundary(fig : figVect; winW, winH : Integer) : figVect;
 Begin
   If fig.pos.x > winW + 50 Then
     fig.pos.x := -50
@@ -43,14 +38,14 @@ Begin
   boundary := fig
 End;
 
-Function moverNave(fig : tNave; vel : vect) : tNave;
+Function moverNave(fig : figVect; vel : vect) : figVect;
 Begin
   fig.pos.x := fig.pos.x + vel.x;
   fig.pos.y := fig.pos.y + vel.y;
   moverNave := fig
 End;
 
-Function kInput(acc: vect; fig : tNave) : vect;
+Function kInput(acc: vect; fig : figVect) : vect;
 Var 
   input : PUInt8;
 Begin
@@ -65,7 +60,7 @@ Begin
   kInput := acc
 End;
 
-Function rotacion(velMax : Integer; fig : tNave) : tNave;
+Function rotacion(velMax : Integer; fig : figVect) : figVect;
 Var 
   input : PUInt8;
 Begin
@@ -77,7 +72,7 @@ Begin
   rotacion := fig
 End;
 
-Function dibujarNave(render : PSDL_Renderer; fig : tNave; w, h : Integer) : tNave;
+Function dibujarNave(render : PSDL_Renderer; fig : figVect; w, h : Integer) : figVect;
 Var 
   tex : PSDL_Texture;
   rect : TSDL_Rect;
@@ -109,28 +104,24 @@ Begin
     evento := True;
 End;
 
-Function centerPos(winH, winW, w, h : Integer) : tNave;
+Function centerPos(winH, winW, w, h : Integer) : figVect;
 Begin
   centerPos.pos.x := (winW Div 2) - (w Div 2);
   centerPos.pos.y := (winH Div 2) - (h Div 2);
 End;
 
-procedure dibujarAsteroide(render : PSDL_Renderer; a : tAsteroide);
+procedure dibujarAsteroide(render : PSDL_Renderer; a : figVect);
 var
   i : Integer;
 begin
   SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
   for i := 0 to (a.lado - 1) do
-    begin
-      SDL_RenderDrawLine(render, 
-        a.puntos[i].x + Round(a.pos.x), a.puntos[i].y + Round(a.pos.y), 
-        a.puntos[(i + 1) mod a.lado].x + Round(a.pos.x), a.puntos[(i + 1) mod a.lado].y + Round(a.pos.y));
-    end;
+    SDL_RenderDrawLine(render, a.puntos[i].x + Round(a.pos.x), a.puntos[i].y + Round(a.pos.y), a.puntos[(i + 1) mod a.lado].x + Round(a.pos.x), a.puntos[(i + 1) mod a.lado].y + Round(a.pos.y));
 end;
 
-function generarAsteroide(r : Real; pos : vect; lado : Integer) : tAsteroide;
+function generarAsteroide(r : Real; pos : vect; lado : Integer) : figVect;
 var
-  resultado : tAsteroide;
+  resultado : figVect;
   i : Integer;
 begin
   resultado.r := r;
@@ -143,7 +134,7 @@ begin
       resultado.puntos[i].x := Round(r * cos(i * 2 * Pi / lado) + random(Round(r) div 2));
       resultado.puntos[i].y := Round(r * sin(i * 2 * Pi / lado) + random(Round(r) div 2));
     end;
-
+  resultado.vel := newVect(random(5) - 2, random(5) - 2);
   generarAsteroide := resultado;
 end;
 
