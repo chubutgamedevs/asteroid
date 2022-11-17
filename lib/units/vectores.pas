@@ -15,8 +15,9 @@ Function limit(v : vect; max : Real) : vect;
 Function sumar(v, w : vect) : vect;
 Function multEscalar(v : vect; num : Real) : vect;
 Function vectZero() : vect;
-function newVect(x : Real; y : Real) : vect;
-//function rotar(vec : vect; angulo : Real) : Real;
+Function newVect(x : Real; y : Real) : vect;
+Function rotVect(vec : vect; angulo : Real) : vect;
+Function rad(angulo : Real) : Real;
 
 Implementation
 
@@ -56,10 +57,21 @@ Begin
   vectZero.y := 0;
 End;
 
-function newVect(x : Real; y : Real) : vect;
-begin
+Function newVect(x : Real; y : Real) : vect;
+Begin
   newVect.x := x;
   newVect.y := y;
+End;
+
+function rad(angulo : Real) : Real;
+begin
+  rad := angulo * Pi / 180;
 end;
+
+Function rotVect(vec : vect; angulo : Real) : vect;
+Begin
+  rotVect.x := Round(cos(rad(angulo)) * vec.x) - Round(sin(rad(angulo)) * vec.y);
+  rotVect.y := Round(sin(rad(angulo)) * vec.x) + Round(cos(rad(angulo)) * vec.y);
+End;
 
 End.

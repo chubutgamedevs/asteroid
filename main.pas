@@ -1,7 +1,7 @@
-Program asteroid;
+Program main;
 {$UNITPATH ./lib/units}
 
-Uses SDL2, SDL2_image, vectores, logic;
+Uses SDL2, SDL2_image, vectores, logic, init;
 
 Const 
   width = 34;
@@ -13,13 +13,13 @@ Var
   acc, velc : vect;
   render : PSDL_Renderer;
   events : PSDL_Event;
-  asteroi : array [0..20] of figVect;
+  asteroide : array [0..20] Of figVect;
   ventanaW : Integer = 1920;
   ventanaH : Integer = 1080;
   i : Integer;
 
 Procedure crearVentaraYRender;
-var
+Var 
   ventana : PSDL_Window;
   icon : PSDL_Surface;
 Begin
@@ -29,31 +29,20 @@ Begin
   SDL_SetWindowIcon(ventana, icon);
 End;
 
-Procedure salirJuego;
-var
-  ventana : PSDL_Window;
-Begin
-  Dispose(events);
-  SDL_DestroyRenderer(render);
-  SDL_DestroyWindow(ventana);
-  SDL_Quit;
-End;
-
 Procedure initPos;
-var
+Var 
   position : vect;
 Begin
   Nave := centerPos(ventanaH, ventanaW, width, height);
   acc := vectZero();
   velc := vectZero();
-  For i := Low(asteroi) To High(asteroi) Do
+  For i := Low(asteroide) To High(asteroide) Do
     Begin
       position := newVect(random(ventanaW + 100), random(ventanaH + 100));
-      asteroi[i] := generarAsteroide(random(100), position, random(13) + 5);
+      asteroide[i] := generarAsteroide(random(100), position, random(13) + 5);
     End
 End;
 
-//MAIN
 Begin
   randomize;
   If SDL_Init(SDL_INIT_VIDEO) < 0 Then Halt;
@@ -76,20 +65,20 @@ Begin
 
       Nave := boundary(Nave, ventanaW, ventanaH);
 
-      // borrar pantalla
       SDL_SetRenderDrawColor(render, 0, 0, 0, SDL_ALPHA_OPAQUE);
       SDL_RenderClear(render);
 
-      for i := Low(asteroi) to High(asteroi) do
-        begin
-          asteroi[i].pos := sumar(asteroi[i].pos, asteroi[i].vel);
-          asteroi[i] := boundary(asteroi[i], ventanaW, ventanaH);
-          dibujarAsteroide(render, asteroi[i]);
-        end;
+      For i := Low(asteroide) To High(asteroide) Do
+        Begin
+          asteroide[i].pos := sumar(asteroide[i].pos, asteroide[i].vel);
+          asteroide[i].rot := asteroide[i].rot + 1;
+          asteroide[i] := boundary(asteroide[i], ventanaW, ventanaH);
+          dibujarAsteroide(render, asteroide[i]);
+        End;
 
       dibujarNave(render, Nave, width, height);
       SDL_RenderPresent(render);
       SDL_Delay(20);
     End;
-  salirJuego;
+  salirJuego(events, render);
 End.
