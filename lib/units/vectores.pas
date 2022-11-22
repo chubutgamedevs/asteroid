@@ -8,6 +8,12 @@ Type
   vect = Record
     x, y : Real
   End;
+  figVect = Record
+    pos, vel : vect;
+    rot, r : Real;
+    lado : Integer;
+    puntos : array Of vect
+  end;
 
 Function norma(v : vect) : Real;
 Function normalize(v : vect) : vect;
@@ -18,6 +24,8 @@ Function vectZero() : vect;
 Function newVect(x : Real; y : Real) : vect;
 Function rotVect(vec : vect; angulo : Real) : vect;
 Function rad(angulo : Real) : Real;
+Function distFig(obj1, obj2 : figVect) : Real;
+Function newPolarVect(r, rodesia : Real) : vect;
 
 Implementation
 
@@ -73,5 +81,21 @@ Begin
   rotVect.x := Round(cos(rad(angulo)) * vec.x) - Round(sin(rad(angulo)) * vec.y);
   rotVect.y := Round(sin(rad(angulo)) * vec.x) + Round(cos(rad(angulo)) * vec.y);
 End;
+
+Function distFig(obj1, obj2 : figVect) : Real;
+var
+  res : vect;
+begin
+  res.x := obj1.pos.x - obj2.pos.x;
+  res.y := obj1.pos.y - obj2.pos.y;
+  distFig := norma(res)
+end;
+
+Function newPolarVect(r, rodesia : Real) : vect;
+Begin
+  newPolarVect.x := r * cos(rodesia);
+  newPolarVect.y := r * sin(rodesia);
+End;
+
 
 End.

@@ -1,30 +1,18 @@
-
 Unit logic;
 
 Interface
 
 Uses sdl2, sdl2_image, vectores;
 
-Type 
-  figVect = Record
-    pos, vel : vect;
-    rot, r : Real;
-    lado : Integer;
-    puntos : array Of vect
-  End;
-
 Function boundary(fig : figVect; winW, winH : Integer) : figVect;
 Function moverNave(fig : figVect; vel : vect) : figVect;
 Function kInput(acc: vect; fig : figVect) : vect;
 Function rotacion(velMax : Integer; fig : figVect) : figVect;
-Function dibujarNave(render : PSDL_Renderer; fig : figVect; w, h : Integer) :
-
-
-                                                                         figVect
-;
+Function dibujarNave(render : PSDL_Renderer; fig : figVect; w, h : Integer) : figVect;
 Function evento(ev : PSDL_Event) : Boolean;
 Function centerPos(winH, winW, w, h : Integer) : figVect;
 Function generarAsteroide(r : Real; pos : vect; lado : Integer) : figVect;
+Function collider(obj1, obj2 : figVect) : Boolean;
 Procedure dibujarAsteroide(render : PSDL_Renderer; a : figVect);
 
 Implementation
@@ -34,11 +22,11 @@ Begin
   If fig.pos.x > winW + 50 Then
     fig.pos.x := -50
   Else If fig.pos.x < -50 Then
-         fig.pos.x := winW
+    fig.pos.x := winW
   Else If fig.pos.y > winH + 50 Then
-         fig.pos.y := -50
+    fig.pos.y := -50
   Else If fig.pos.y < -50 Then
-         fig.pos.y := winH;
+    fig.pos.y := winH;
 
   boundary := fig
 End;
@@ -51,7 +39,6 @@ Begin
 End;
 
 Function kInput(acc: vect; fig : figVect) : vect;
-
 Var 
   input : PUInt8;
 Begin
@@ -67,7 +54,6 @@ Begin
 End;
 
 Function rotacion(velMax : Integer; fig : figVect) : figVect;
-
 Var 
   input : PUInt8;
 Begin
@@ -79,12 +65,7 @@ Begin
   rotacion := fig
 End;
 
-Function dibujarNave(render : PSDL_Renderer; fig : figVect; w, h : Integer) :
-
-
-                                                                         figVect
-;
-
+Function dibujarNave(render : PSDL_Renderer; fig : figVect; w, h : Integer) : figVect;
 Var 
   tex : PSDL_Texture;
   rect : TSDL_Rect;
@@ -103,19 +84,6 @@ Begin
 
   SDL_RenderCopyEx(render, tex, Nil, @rect, fig.rot + 90, Nil, 1);
   dibujarNave := fig
-End;
-
-Function evento(ev : PSDL_Event) : Boolean;
-
-Var 
-  input : PUInt8;
-Begin
-  input := SDL_GetKeyboardState(Nil);
-  If (input[SDL_SCANCODE_ESCAPE] = 1) Or (ev^.window.event =
-     SDL_WINDOWEVENT_CLOSE) Then
-    evento := False
-  Else
-    evento := True
 End;
 
 Function centerPos(winH, winW, w, h : Integer) : figVect;
@@ -163,6 +131,23 @@ Begin
   If (resultado.vel.x = 0) And (resultado.vel.y = 0) Then
     resultado.vel := newVect(random(4) + 1, random(4) + 1);
   generarAsteroide := resultado
+End;
+
+Function collider(obj1, obj2 : figVect) : Boolean;
+Var 
+  dr : Real;
+Begin
+  dr := distFig(obj1, obj2) - obj2.r - obj1.r;
+
+  collider := dr <= 0
+End;
+
+Function evento(ev : PSDL_Event) : Boolean;
+Var 
+  input : PUInt8;
+Begin
+  input := SDL_GetKeyboardState(Nil);
+  evento := Not ((input[SDL_SCANCODE_ESCAPE] = 1) Or (ev^.window.event = SDL_WINDOWEVENT_CLOSE));
 End;
 
 End.

@@ -34,12 +34,14 @@ Var
   position : vect;
 Begin
   Nave := centerPos(ventanaH, ventanaW, width, height);
+  Nave.r := 14;
   acc := vectZero();
   velc := vectZero();
   For i := Low(asteroide) To High(asteroide) Do
     Begin
-      position := newVect(random(ventanaW + 100), random(ventanaH + 100));
-      asteroide[i] := generarAsteroide(random(100), position, random(13) + 5);
+      position := newPolarVect(250 + random(ventanaW), random(2* Round(Pi)));
+      position := sumar(position, newVect(ventanaW/2, ventanaH /2));
+      asteroide[i] := generarAsteroide(random(70) + 18, position, random(13) + 5);
     End
 End;
 
@@ -70,6 +72,8 @@ Begin
 
       For i := Low(asteroide) To High(asteroide) Do
         Begin
+          if collider(Nave, asteroide[i]) then
+            exit;
           asteroide[i].pos := sumar(asteroide[i].pos, asteroide[i].vel);
           asteroide[i].rot := asteroide[i].rot + 1;
           asteroide[i] := boundary(asteroide[i], ventanaW, ventanaH);
