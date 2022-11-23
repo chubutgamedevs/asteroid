@@ -6,7 +6,7 @@ Uses sdl2, sdl2_image, vectores;
 
 Function boundary(fig : figVect; winW, winH : Integer) : figVect;
 Function moverNave(fig : figVect; vel : vect) : figVect;
-Function kInput(acc: vect; fig : figVect) : vect;
+Function kInput(render : PSDL_Renderer; acc: vect; fig : figVect) : vect;
 Function rotacion(velMax : Integer; fig : figVect) : figVect;
 Function dibujarNave(render : PSDL_Renderer; fig : figVect; w, h : Integer) : figVect;
 Function evento(ev : PSDL_Event) : Boolean;
@@ -14,8 +14,39 @@ Function centerPos(winH, winW, w, h : Integer) : figVect;
 Function generarAsteroide(r : Real; pos : vect; lado : Integer) : figVect;
 Function collider(obj1, obj2 : figVect) : Boolean;
 Procedure dibujarAsteroide(render : PSDL_Renderer; a : figVect);
+Procedure disparo(render : PSDL_Renderer; fig : figVect);
+Function raycast(fig1, fig2 : figVect) : Real;
 
 Implementation
+
+Function raycast(fig1, fig2 : figVect) : Real;
+var
+  s : vect;
+  b, c, h : Real;
+begin
+  s := restar(fig1.pos, fig2.pos);
+  b := dot(s, newPolarVect(1, fig1.rot));
+  c := dot(s, s) - fig2.r * fig2.r;
+  h := b * b - c;
+  if h < 0 then
+    raycast := 2000
+  else
+    raycast := -b - sqrt(h);
+end;
+
+Procedure disparo(render : PSDL_Renderer; fig : figVect);
+var
+  vet : vect;
+  s : Real;
+begin
+  vet.x := fig.pos.x + Round(cos(rad(fig.rot)) * 2000);
+  vet.y := fig.pos.y + Round(sin(rad(fig.rot)) * 2000);
+
+  SDL_SetRenderDrawColor(render, 255, 255, 255, 0);
+  SDL_RenderDrawLine(render, Round(fig.pos.x), Round(fig.pos.y), Round(vet.x), Round(vet.y));
+  SDL_RenderPresent(render);
+
+end;
 
 Function boundary(fig : figVect; winW, winH : Integer) : figVect;
 Begin
@@ -38,7 +69,7 @@ Begin
   moverNave := fig
 End;
 
-Function kInput(acc: vect; fig : figVect) : vect;
+Function kInput(render : PSDL_Renderer; acc: vect; fig : figVect) : vect;
 Var 
   input : PUInt8;
 Begin
@@ -50,6 +81,8 @@ Begin
       acc.x := acc.x + Round(cos(rad(fig.rot)) * 1);
       acc.y := acc.y + Round(sin(rad(fig.rot)) * 1)
     End;
+  if input[SDL_SCANCODE_SPACE] = 1 then
+    disparo(render, fig);
   kInput := acc
 End;
 
@@ -138,7 +171,6 @@ Var
   dr : Real;
 Begin
   dr := distFig(obj1, obj2) - obj2.r - obj1.r;
-
   collider := dr <= 0
 End;
 

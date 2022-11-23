@@ -39,8 +39,8 @@ Begin
   velc := vectZero();
   For i := Low(asteroide) To High(asteroide) Do
     Begin
-      position := newPolarVect(250 + random(ventanaW), random(2* Round(Pi)));
-      position := sumar(position, newVect(ventanaW/2, ventanaH /2));
+      position := newPolarVect(230 + random(ventanaW), random(360));
+//      position := sumar(position, newVect(ventanaW/2, ventanaH /2));
       asteroide[i] := generarAsteroide(random(70) + 18, position, random(13) + 5);
     End
 End;
@@ -59,7 +59,7 @@ Begin
 
       Nave := rotacion(velocidadMax, Nave);
       velc := sumar(velc, acc);
-      acc := kInput(acc, Nave);
+      acc := kInput(render, acc, Nave);
       velc := limit(velc, velocidadMax);
 
       Nave := moverNave(Nave, velc);
