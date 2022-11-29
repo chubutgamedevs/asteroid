@@ -2,7 +2,7 @@ Unit vectores;
 
 Interface
 
-Uses math;
+Uses math, sdl2;
 
 Type 
   vect = Record
@@ -13,7 +13,7 @@ Type
     rot, r : Double;
     lado : Integer;
     puntos : array Of vect
-  end;
+  End;
 
 Function norma(v : vect) : Real;
 Function normalize(v : vect) : vect;
@@ -27,15 +27,15 @@ Function rotVect(vec : vect; angulo : Real) : vect;
 Function rad(angulo : Real) : Real;
 Function distFig(obj1, obj2 : figVect) : Real;
 Function newPolarVect(r, angulo : Real) : vect;
-function dot(u, v : vect) : Real;
-
+Function dot(u, v : vect) : Real;
+Function setColor(r, g, b, a : Byte) : TSDL_Color;
 
 Implementation
 
 Function dot(u, v : vect) : Real;
-begin
+Begin
   dot := (u.x * v.x) + (u.y * v.y)
-end;
+End;
 
 Function norma(v : vect) : Real;
 Begin
@@ -49,10 +49,10 @@ Begin
 End;
 
 Function restar(v, w : vect) : vect;
-begin
+Begin
   restar.x := v.x - w.x;
   restar.y := v.y - w.y
-end;
+End;
 
 Function multEscalar(v : vect; num : Real) : vect;
 Begin
@@ -85,15 +85,15 @@ Begin
   newVect.y := y
 End;
 
-function rad(angulo : Real) : Real;
-begin
+Function rad(angulo : Real) : Real;
+Begin
   rad := angulo * Pi / 180
-end;
+End;
 
 Function newPolarVect(r, angulo : Real) : vect;
 Begin
   newPolarVect.x := r * cos(rad(angulo));
-  newPolarVect.y := r * sin(rad(angulo));
+  newPolarVect.y := r * sin(rad(angulo))
 End;
 
 Function rotVect(vec : vect; angulo : Real) : vect;
@@ -103,13 +103,20 @@ Begin
 End;
 
 Function distFig(obj1, obj2 : figVect) : Real;
-var
+Var 
   res : vect;
-begin
+Begin
   res.x := obj1.pos.x - obj2.pos.x;
   res.y := obj1.pos.y - obj2.pos.y;
   distFig := norma(res)
-end;
+End;
 
+Function setColor(r, g, b, a : Byte) : TSDL_Color;
+begin
+  setColor.r := r;
+  setColor.g := g;
+  setColor.b := b;
+  setColor.a := a;
+end;
 
 End.

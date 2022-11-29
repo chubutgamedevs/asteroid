@@ -13,40 +13,39 @@ Function evento(ev : PSDL_Event) : Boolean;
 Function centerPos(winH, winW, w, h : Integer) : figVect;
 Function generarAsteroide(r : Real; pos : vect; lado : Integer) : figVect;
 Function collider(obj1, obj2 : figVect) : Boolean;
+Function raycast(fig1, fig2 : figVect) : Real;
 Procedure dibujarAsteroide(render : PSDL_Renderer; a : figVect);
 Procedure disparo(render : PSDL_Renderer; fig : figVect);
-Function raycast(fig1, fig2 : figVect) : Real;
 
 Implementation
 
 Function raycast(fig1, fig2 : figVect) : Real;
-var
+Var 
   s : vect;
   b, c, h : Real;
-begin
+Begin
   s := restar(fig1.pos, fig2.pos);
   b := dot(s, newPolarVect(1, fig1.rot));
   c := dot(s, s) - fig2.r * fig2.r;
   h := b * b - c;
-  if h < 0 then
+  If h < 0 Then
     raycast := 2000
-  else
-    raycast := -b - sqrt(h);
-end;
+  Else
+    raycast := -b - sqrt(h)
+End;
 
 Procedure disparo(render : PSDL_Renderer; fig : figVect);
-var
+Var 
   vet : vect;
   s : Real;
-begin
+Begin
   vet.x := fig.pos.x + Round(cos(rad(fig.rot)) * 2000);
   vet.y := fig.pos.y + Round(sin(rad(fig.rot)) * 2000);
 
   SDL_SetRenderDrawColor(render, 255, 255, 255, 0);
   SDL_RenderDrawLine(render, Round(fig.pos.x), Round(fig.pos.y), Round(vet.x), Round(vet.y));
   SDL_RenderPresent(render);
-
-end;
+End;
 
 Function boundary(fig : figVect; winW, winH : Integer) : figVect;
 Begin
@@ -81,7 +80,7 @@ Begin
       acc.x := acc.x + Round(cos(rad(fig.rot)) * 1);
       acc.y := acc.y + Round(sin(rad(fig.rot)) * 1)
     End;
-  if input[SDL_SCANCODE_SPACE] = 1 then
+  If input[SDL_SCANCODE_SPACE] = 1 Then
     disparo(render, fig);
   kInput := acc
 End;
@@ -141,29 +140,29 @@ Begin
       // Trasladar
       v := sumar(v, a.pos);
       u := sumar(u, a.pos);
-      SDL_RenderDrawLine(render, Round(v.x), Round(v.y), Round(u.x), Round(u.y));
-    End;
+      SDL_RenderDrawLine(render, Round(v.x), Round(v.y), Round(u.x), Round(u.y))
+    End
 End;
 
 Function generarAsteroide(r : Real; pos : vect; lado : Integer) : figVect;
 Var 
-  resultado : figVect;
+  res : figVect;
   i : Integer;
 Begin
-  resultado.r := r;
-  resultado.pos := pos;
-  resultado.lado := lado;
-  SetLength(resultado.puntos, lado);
+  res.r := r;
+  res.pos := pos;
+  res.lado := lado;
+  SetLength(res.puntos, lado);
 
   For i := 0 To (lado - 1) Do
     Begin
-      resultado.puntos[i].x := Round(r * cos(i * 2 * Pi / lado) + random(Round(r) Div 2));
-      resultado.puntos[i].y := Round(r * sin(i * 2 * Pi / lado) + random(Round(r) Div 2));
+      res.puntos[i].x := Round(r * cos(i * 2 * Pi / lado) + random(Round(r) Div 2));
+      res.puntos[i].y := Round(r * sin(i * 2 * Pi / lado) + random(Round(r) Div 2));
     End;
-  resultado.vel := newVect(random(6) - 3, random(6) - 3);
-  If (resultado.vel.x = 0) And (resultado.vel.y = 0) Then
-    resultado.vel := newVect(random(4) + 1, random(4) + 1);
-  generarAsteroide := resultado
+  res.vel := newVect(random(6) - 3, random(6) - 3);
+  If (res.vel.x = 0) And (res.vel.y = 0) Then
+    res.vel := newVect(random(4) + 1, random(4) + 1);
+  generarAsteroide := res
 End;
 
 Function collider(obj1, obj2 : figVect) : Boolean;
@@ -179,7 +178,7 @@ Var
   input : PUInt8;
 Begin
   input := SDL_GetKeyboardState(Nil);
-  evento := Not ((input[SDL_SCANCODE_ESCAPE] = 1) Or (ev^.window.event = SDL_WINDOWEVENT_CLOSE));
+  evento := Not ((input[SDL_SCANCODE_ESCAPE] = 1) Or (ev^.window.event = SDL_WINDOWEVENT_CLOSE))
 End;
 
 End.
