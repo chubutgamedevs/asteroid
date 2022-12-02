@@ -15,36 +15,59 @@ Function generarAsteroide(r : Real; pos : vect; lado : Integer) : figVect;
 Function collider(obj1, obj2 : figVect) : Boolean;
 Function raycast(fig1, fig2 : figVect) : Real;
 Procedure dibujarAsteroide(render : PSDL_Renderer; a : figVect);
-Procedure disparo(render : PSDL_Renderer; fig : figVect);
+procedure kDisparo(render : PSDL_Renderer; fig : figVect; ArrAst : Array Of figVect; d : Real);
+Procedure disparo(render : PSDL_Renderer; fig : figVect; dist : Real);
 
 Implementation
 
 Function raycast(fig1, fig2 : figVect) : Real;
 Var 
-  s : vect;
-  b, c, h : Real;
+  e, d: vect;
+  a, bSq, rSq, f: Real;
 Begin
-  s := restar(fig1.pos, fig2.pos);
-  b := dot(s, newPolarVect(1, fig1.rot));
-  c := dot(s, s) - fig2.r * fig2.r;
-  h := b * b - c;
-  If h < 0 Then
-    raycast := 2000
+  e := restar(fig1.pos, fig2.pos);
+  // El vector entre el raycast y el centro del circulo.
+  d := newPolarVect(1, fig2.rot - 90);
+  // dirección del raycast (norma 1)
+  a := dot(e, d);
+  // Longitud de la proyección de e sobre d
+  bSq := lengthSq(e) - (a * a);
+  rSq := fig2.r * fig2.r;
+  If (rSq - bSq) < 0 Then
+    Begin
+      // No le pega
+      raycast := 2000;
+      //WriteLn('No pega');
+      // "Infinito"
+      exit;
+    End;
+  f := Sqrt(rSq - bSq);
+  If a < f Then
+    Begin
+      raycast := 2000;
+      exit
+    End;
+  If (lengthSq(e) < rSq) Then
+    raycast := a + f // Está dentro del circulo, quizás debería ser 0
   Else
-    raycast := -b - sqrt(h)
+    begin
+    raycast := a - f;
+    //WriteLn('Pega');
+    end;
+  // Le pega.
 End;
 
-Procedure disparo(render : PSDL_Renderer; fig : figVect);
+Procedure disparo(render : PSDL_Renderer; fig : figVect; dist : Real);
 Var 
-  vet : vect;
-  s : Real;
+  vet, tip : vect;
 Begin
+  tip := newPolarVect(dist, fig.rot);
+  tip := sumar(tip, fig.pos);
   vet.x := fig.pos.x + Round(cos(rad(fig.rot)) * 2000);
   vet.y := fig.pos.y + Round(sin(rad(fig.rot)) * 2000);
 
   SDL_SetRenderDrawColor(render, 255, 255, 255, 0);
-  SDL_RenderDrawLine(render, Round(fig.pos.x), Round(fig.pos.y), Round(vet.x), Round(vet.y));
-  SDL_RenderPresent(render);
+  SDL_RenderDrawLine(render, Round(fig.pos.x), Round(fig.pos.y), Round(tip.x), Round(tip.y));
 End;
 
 Function boundary(fig : figVect; winW, winH : Integer) : figVect;
@@ -80,10 +103,18 @@ Begin
       acc.x := acc.x + Round(cos(rad(fig.rot)) * 1);
       acc.y := acc.y + Round(sin(rad(fig.rot)) * 1)
     End;
-  If input[SDL_SCANCODE_SPACE] = 1 Then
-    disparo(render, fig);
   kInput := acc
 End;
+
+procedure kDisparo(render : PSDL_Renderer; fig : figVect; ArrAst : array of figVect; d : Real);
+var
+  input : PUInt8;
+  i : Integer;
+begin
+  input := SDL_GetKeyboardState(Nil);
+  If input[SDL_SCANCODE_SPACE] = 1 Then
+    disparo(render, fig, d)
+end;
 
 Function rotacion(velMax : Integer; fig : figVect) : figVect;
 Var 
@@ -113,7 +144,6 @@ Begin
     tex := IMG_LoadTexture(render, './media/img/nave1.png')
   Else
     tex := IMG_LoadTexture(render, './media/img/nave0.png');
-
   SDL_RenderCopyEx(render, tex, Nil, @rect, fig.rot + 90, Nil, 1);
   dibujarNave := fig
 End;
@@ -156,8 +186,8 @@ Begin
 
   For i := 0 To (lado - 1) Do
     Begin
-      res.puntos[i].x := Round(r * cos(i * 2 * Pi / lado) + random(Round(r) Div 2));
-      res.puntos[i].y := Round(r * sin(i * 2 * Pi / lado) + random(Round(r) Div 2));
+      res.puntos[i].x := Round(r * cos(i * 2 * Pi / lado));// + random(Round(r) Div 2));
+      res.puntos[i].y := Round(r * sin(i * 2 * Pi / lado));// + (Round(r) Div 2));
     End;
   res.vel := newVect(random(6) - 3, random(6) - 3);
   If (res.vel.x = 0) And (res.vel.y = 0) Then

@@ -8,8 +8,8 @@ Function crearVentaraYRender(ventanaH, ventanaW : Integer; render : PSDL_Rendere
 Function animAsteroid(asteroide : figVect; render : PSDL_Renderer; ventanaW, ventanaH : Integer) : figVect;
 Function initPosNave(Nave : figVect; ventanaH, ventanaW, width, height : Integer) : figVect;
 Function initPosAsteroide(asteroide : figVect; ventanaW : Integer) : figVect;
-Function initFont(font : PTTF_Font; render : PSDL_Renderer) : PTTF_Font;
-Procedure salirJuego(events : PSDL_Event; render : PSDL_Renderer; font : PTTF_Font);
+Procedure initFont(render : PSDL_Renderer);
+Procedure salirJuego(events : PSDL_Event; render : PSDL_Renderer);
 
 Implementation
 
@@ -43,35 +43,35 @@ End;
 
 Function animAsteroid(asteroide : figVect; render : PSDL_Renderer; ventanaW, ventanaH : Integer) : figVect;
 Begin
-  asteroide.pos := sumar(asteroide.pos, asteroide.vel);
+  //asteroide.pos := sumar(asteroide.pos, asteroide.vel);
   asteroide.rot := asteroide.rot + 1;
   asteroide := boundary(asteroide, ventanaW, ventanaH);
   dibujarAsteroide(render, asteroide);
   animAsteroid := asteroide
 End;
 
-Function initFont(font : PTTF_Font; render : PSDL_Renderer) : PTTF_Font;
+procedure initFont(render : PSDL_Renderer);
 Var 
+  font : PTTF_Font;
   texto : PSDL_Surface;
   texture : PSDL_Texture;
   color : TSDL_Color;
 Begin
-  color := setColor(255, 255, 255, 255);
   font := TTF_OpenFont('../../media/NovaSquare-Regular.ttf', 12);
-  {TTF_SetFontStyle(font, TTF_STYLE_NORMAL);
+  TTF_SetFontStyle(font, TTF_STYLE_UNDERLINE Or TTF_STYLE_ITALIC);
   TTF_SetFontOutline(font, 1);
-  TTF_SetFontHinting(font, TTF_HINTING_NORMAL);}
+  TTF_SetFontHinting(font, TTF_HINTING_NORMAL);
+  color := setColor(255, 255, 255, 255);
   texto := TTF_RenderText_Solid(font, 'GAME OVER', color);
   texture := SDL_CreateTextureFromSurface(render, texto);
-  initFont := font;
+  SDL_RenderCopy(render, texture, Nil, Nil);
 End;
 
-Procedure salirJuego(events : PSDL_Event; render : PSDL_Renderer; font : PTTF_Font);
+Procedure salirJuego(events : PSDL_Event; render : PSDL_Renderer);
 Var 
   ventana : PSDL_Window;
 Begin
   Dispose(events);
-  TTF_CloseFont(font);
   SDL_DestroyRenderer(render);
   SDL_DestroyWindow(ventana);
   TTF_Quit;

@@ -29,6 +29,7 @@ Function distFig(obj1, obj2 : figVect) : Real;
 Function newPolarVect(r, angulo : Real) : vect;
 Function dot(u, v : vect) : Real;
 Function setColor(r, g, b, a : Byte) : TSDL_Color;
+Function lengthSq(v: vect): Real;
 
 Implementation
 
@@ -109,6 +110,11 @@ Begin
   res.x := obj1.pos.x - obj2.pos.x;
   res.y := obj1.pos.y - obj2.pos.y;
   distFig := norma(res)
+End;
+
+Function lengthSq(v: vect): Real;
+Begin
+  lengthSq := v.x * v.x + v.y * v.y;
 End;
 
 Function setColor(r, g, b, a : Byte) : TSDL_Color;
