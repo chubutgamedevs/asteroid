@@ -29,7 +29,7 @@ Begin
   d := 5000;
   For i := Low(ast) To High(ast) Do
     Begin
-      da := raycast(fig1, ast[i]);
+      da := raycast(ast[i], fig1);
       If da < d Then
         Begin
           d := da;
