@@ -25,9 +25,9 @@ Var
   e, d: vect;
   a, bSq, rSq, f: Real;
 Begin
-  e := restar(fig1.pos, fig2.pos);
+  e := restar(fig2.pos, fig1.pos);
   // El vector entre el raycast y el centro del circulo.
-  d := newPolarVect(1, fig2.rot - 90);
+  d := newPolarVect(1, fig1.rot);
   // dirección del raycast (norma 1)
   a := dot(e, d);
   // Longitud de la proyección de e sobre d

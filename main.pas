@@ -1,4 +1,3 @@
-
 Program main;
 {$UNITPATH ./lib/units}
 
@@ -21,7 +20,6 @@ Var
   i : Integer;
 
 Function astCast(fig1 : figVect; ast : Array Of figVect; Var a: figVect) : Real;
-
 Var 
   i : Integer;
   d, da : Real;
@@ -29,7 +27,7 @@ Begin
   d := 5000;
   For i := Low(ast) To High(ast) Do
     Begin
-      da := raycast(ast[i], fig1);
+      da := raycast(fig1, ast[i]);
       If da < d Then
         Begin
           d := da;
@@ -38,7 +36,6 @@ Begin
     End;
   astCast := d;
 End;
-
 
 Begin
   randomize;
@@ -64,7 +61,6 @@ Begin
       SDL_SetRenderDrawColor(render, 0, 0, 0, SDL_ALPHA_OPAQUE);
       SDL_RenderClear(render);
       d := astCast(Nave, asteroide, a);
-      writeln(d);
       kDisparo(render, Nave, asteroide, d);
       For i := Low(asteroide) To High(asteroide) Do
         Begin
