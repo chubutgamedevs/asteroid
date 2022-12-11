@@ -10,7 +10,7 @@ Type
   End;
   figVect = Record
     pos, vel : vect;
-    rot, r : Double;
+    rot, r : Real;
     lado : Integer;
     puntos : array Of vect
   End;

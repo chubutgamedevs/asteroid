@@ -43,7 +43,7 @@ End;
 
 Function animAsteroid(asteroide : figVect; render : PSDL_Renderer; ventanaW, ventanaH : Integer) : figVect;
 Begin
-  //asteroide.pos := sumar(asteroide.pos, asteroide.vel);
+  asteroide.pos := sumar(asteroide.pos, asteroide.vel);
   asteroide.rot := asteroide.rot + 1;
   asteroide := boundary(asteroide, ventanaW, ventanaH);
   dibujarAsteroide(render, asteroide);
@@ -57,7 +57,7 @@ Var
   texture : PSDL_Texture;
   color : TSDL_Color;
 Begin
-  font := TTF_OpenFont('../../media/NovaSquare-Regular.ttf', 12);
+  font := TTF_OpenFont('../../media/font/NovaSquare-Regular.ttf', 12);
   TTF_SetFontStyle(font, TTF_STYLE_UNDERLINE Or TTF_STYLE_ITALIC);
   TTF_SetFontOutline(font, 1);
   TTF_SetFontHinting(font, TTF_HINTING_NORMAL);

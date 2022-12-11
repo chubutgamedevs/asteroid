@@ -14,6 +14,7 @@ Function centerPos(winH, winW, w, h : Integer) : figVect;
 Function generarAsteroide(r : Real; pos : vect; lado : Integer) : figVect;
 Function collider(obj1, obj2 : figVect) : Boolean;
 Function raycast(fig1, fig2 : figVect) : Real;
+Function astCast(fig1 : figVect; ast : Array Of figVect; Var a: figVect) : Real;
 Procedure dibujarAsteroide(render : PSDL_Renderer; a : figVect);
 procedure kDisparo(render : PSDL_Renderer; fig : figVect; ArrAst : Array Of figVect; d : Real);
 Procedure disparo(render : PSDL_Renderer; fig : figVect; dist : Real);
@@ -35,11 +36,8 @@ Begin
   rSq := fig2.r * fig2.r;
   If (rSq - bSq) < 0 Then
     Begin
-      // No le pega
       raycast := 2000;
-      //WriteLn('No pega');
-      // "Infinito"
-      exit;
+      exit
     End;
   f := Sqrt(rSq - bSq);
   If a < f Then
@@ -47,24 +45,36 @@ Begin
       raycast := 2000;
       exit
     End;
-  If (lengthSq(e) < rSq) Then
+  If lengthSq(e) < rSq Then
     raycast := a + f // Está dentro del circulo, quizás debería ser 0
   Else
-    begin
-    raycast := a - f;
-    //WriteLn('Pega');
-    end;
-  // Le pega.
+    raycast := a - f
+End;
+
+Function astCast(fig1 : figVect; ast : Array Of figVect; Var a: figVect) : Real;
+Var 
+  i : Integer;
+  d, da : Real;
+Begin
+  d := 5000;
+  For i := Low(ast) To High(ast) Do
+    Begin
+      da := raycast(fig1, ast[i]);
+      If da < d Then
+        Begin
+          d := da;
+          a := ast[i]
+        End
+    End;
+  astCast := d
 End;
 
 Procedure disparo(render : PSDL_Renderer; fig : figVect; dist : Real);
 Var 
-  vet, tip : vect;
+  tip : vect;
 Begin
   tip := newPolarVect(dist, fig.rot);
   tip := sumar(tip, fig.pos);
-  vet.x := fig.pos.x + Round(cos(rad(fig.rot)) * 2000);
-  vet.y := fig.pos.y + Round(sin(rad(fig.rot)) * 2000);
 
   SDL_SetRenderDrawColor(render, 255, 255, 255, 0);
   SDL_RenderDrawLine(render, Round(fig.pos.x), Round(fig.pos.y), Round(tip.x), Round(tip.y));
@@ -109,7 +119,6 @@ End;
 procedure kDisparo(render : PSDL_Renderer; fig : figVect; ArrAst : array of figVect; d : Real);
 var
   input : PUInt8;
-  i : Integer;
 begin
   input := SDL_GetKeyboardState(Nil);
   If input[SDL_SCANCODE_SPACE] = 1 Then
@@ -186,8 +195,8 @@ Begin
 
   For i := 0 To (lado - 1) Do
     Begin
-      res.puntos[i].x := Round(r * cos(i * 2 * Pi / lado));// + random(Round(r) Div 2));
-      res.puntos[i].y := Round(r * sin(i * 2 * Pi / lado));// + (Round(r) Div 2));
+      res.puntos[i].x := Round(r * cos(i * 2 * Pi / lado) + random(Round(r) Div 2));
+      res.puntos[i].y := Round(r * sin(i * 2 * Pi / lado) + (Round(r) Div 2));
     End;
   res.vel := newVect(random(6) - 3, random(6) - 3);
   If (res.vel.x = 0) And (res.vel.y = 0) Then

@@ -19,24 +19,6 @@ Var
   d : Real;
   i : Integer;
 
-Function astCast(fig1 : figVect; ast : Array Of figVect; Var a: figVect) : Real;
-Var 
-  i : Integer;
-  d, da : Real;
-Begin
-  d := 5000;
-  For i := Low(ast) To High(ast) Do
-    Begin
-      da := raycast(fig1, ast[i]);
-      If da < d Then
-        Begin
-          d := da;
-          a := ast[i];
-        End;
-    End;
-  astCast := d;
-End;
-
 Begin
   randomize;
   render := crearVentaraYRender(ventanaH, ventanaW, render);

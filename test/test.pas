@@ -128,7 +128,7 @@ Begin
       SDL_PollEvent(event);
       rectangulo := mando(teclado, rectangulo);
 
-      LimitarVel(vel, velocidadMax);
+      limit(vel, velocidadMax);
 
       vel := sumar(vel, aceleracion);
 
