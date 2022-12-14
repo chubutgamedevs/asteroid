@@ -14,7 +14,8 @@ Function centerPos(winH, winW, w, h : Integer) : figVect;
 Function generarAsteroide(r : Real; pos : vect; lado : Integer) : figVect;
 Function collider(obj1, obj2 : figVect) : Boolean;
 Function raycast(fig1, fig2 : figVect) : Real;
-Function astCast(fig1 : figVect; ast : Array Of figVect; Var a: figVect) : Real;
+Function astCast(fig1 : figVect; ast : Array Of figVect; Var a: Integer) : Real;
+function destruirAst(a : figVect; render : PSDL_Renderer) : figVect;
 Procedure dibujarAsteroide(render : PSDL_Renderer; a : figVect);
 procedure kDisparo(render : PSDL_Renderer; fig : figVect; ArrAst : Array Of figVect; d : Real);
 Procedure disparo(render : PSDL_Renderer; fig : figVect; dist : Real);
@@ -51,7 +52,7 @@ Begin
     raycast := a - f
 End;
 
-Function astCast(fig1 : figVect; ast : Array Of figVect; Var a: figVect) : Real;
+Function astCast(fig1 : figVect; ast : Array Of figVect; Var a: Integer) : Real;
 Var 
   i : Integer;
   d, da : Real;
@@ -63,7 +64,7 @@ Begin
       If da < d Then
         Begin
           d := da;
-          a := ast[i]
+          a := i
         End
     End;
   astCast := d
@@ -171,8 +172,8 @@ Begin
   SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
   For i := 0 To (a.lado - 1) Do
     Begin
-      v := a.puntos[i];
-      u := a.puntos[(i + 1) Mod a.lado];
+      v := multEscalar(a.puntos[i], a.r / 100);
+      u := multEscalar(a.puntos[(i + 1) Mod a.lado], a.r / 100);
       // Rotar
       v := rotVect(v, a.rot);
       u := rotVect(u, a.rot);
@@ -195,8 +196,8 @@ Begin
 
   For i := 0 To (lado - 1) Do
     Begin
-      res.puntos[i].x := Round(r * cos(i * 2 * Pi / lado) + random(Round(r) Div 2));
-      res.puntos[i].y := Round(r * sin(i * 2 * Pi / lado) + (Round(r) Div 2));
+      res.puntos[i].x := Round(100 * cos(i * 2 * Pi / lado) + random(100 Div 2));
+      res.puntos[i].y := Round(100 * sin(i * 2 * Pi / lado) + (100 Div 2));
     End;
   res.vel := newVect(random(6) - 3, random(6) - 3);
   If (res.vel.x = 0) And (res.vel.y = 0) Then
@@ -218,6 +219,19 @@ Var
 Begin
   input := SDL_GetKeyboardState(Nil);
   evento := Not ((input[SDL_SCANCODE_ESCAPE] = 1) Or (ev^.window.event = SDL_WINDOWEVENT_CLOSE))
+End;
+
+function destruirAst(a : figVect; render : PSDL_Renderer) : figVect;
+Var 
+  cont : Integer;
+Begin
+  a.r := a.r - 1;
+  if a.r < 13 then
+    begin
+      a.pos := newVect(100000, 100000);
+      cont := cont + 1
+    end;
+  destruirAst := a
 End;
 
 End.

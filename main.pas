@@ -42,7 +42,10 @@ Begin
       Nave := boundary(Nave, ventanaW, ventanaH);
       SDL_SetRenderDrawColor(render, 0, 0, 0, SDL_ALPHA_OPAQUE);
       SDL_RenderClear(render);
-      d := astCast(Nave, asteroide, a);
+      i := -1;
+      d := astCast(Nave, asteroide, i);
+      if i >= 0 then
+        asteroide[i] := destruirAst(asteroide[i], render);
       kDisparo(render, Nave, asteroide, d);
       For i := Low(asteroide) To High(asteroide) Do
         Begin

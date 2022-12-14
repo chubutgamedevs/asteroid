@@ -43,7 +43,7 @@ End;
 
 Function animAsteroid(asteroide : figVect; render : PSDL_Renderer; ventanaW, ventanaH : Integer) : figVect;
 Begin
-  asteroide.pos := sumar(asteroide.pos, asteroide.vel);
+  //asteroide.pos := sumar(asteroide.pos, asteroide.vel);
   asteroide.rot := asteroide.rot + 1;
   asteroide := boundary(asteroide, ventanaW, ventanaH);
   dibujarAsteroide(render, asteroide);
